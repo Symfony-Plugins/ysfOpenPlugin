@@ -1,0 +1,26 @@
+ysfOpenPlugin
+=============
+
+The `ysfOpenPlugin` is a symfony plugin that provides integration with the Yahoo! social and data apis.
+
+
+Installation
+------------
+
+  * Install the plugin
+
+        $ symfony plugin:install ysfOpenPlugin
+        $ symfony project:publish-assets
+
+  * Clear you cache
+
+        $ symfony cc
+
+
+TODO
+----
+
+
+CHANGELOG
+---------
+
