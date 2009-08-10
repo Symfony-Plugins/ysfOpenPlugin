@@ -13,7 +13,7 @@ class OpenIdentityForm extends sfForm
   public function configure()
   {	
     $this->setWidgets(array(
-      'identity' => new sfWidgetFormInput(array(), array('class' => 'openid required')),
+      'identity' => new sfWidgetFormInputText(array(), array('class' => 'openid required')),
     ));
 
     $this->setValidators(array(
