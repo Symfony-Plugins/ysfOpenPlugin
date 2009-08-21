@@ -5,6 +5,13 @@
  * file that was distributed with this source code.
  */
 
+ /**
+  User
+   -> Profile (profile -> import from openid or oauth (profile endpoints = google, yahoo, twitter)
+   -> Identity (openid)
+   -> Authorization (oauth)
+ **/
+
 /**
  * ysfOAuthUser will use oauth for authentication management and openid for identity management.
  *
@@ -40,6 +47,9 @@ class ysfOAuthUser extends ysfOpenIDUser
   {
     parent::initialize($dispatcher, $storage, $options);
 
+    // addOAuthClient: google = oauth-google, twitter = oauth-twitter, yahoo = oauth-yahoo
+    // add events for auth registration / check credentials
+
     // handle yap users
     if(isset($_REQUEST['yap_appid'], $_REQUEST['yap_viewer_guid']))
     {
@@ -69,6 +79,11 @@ class ysfOAuthUser extends ysfOpenIDUser
         {
           // yahoo oauth application
           $this->setOAuthClient('yahoo', new ysfYahooOAuthClient($this->dispatcher, new OAuth($this->options['yahoo_oauth_consumer_key'], $this->options['yahoo_oauth_consumer_secret'], OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_AUTHORIZATION), array('logging' => $this->options['logging'])));
+          if(sfConfig::get('sf_debug'))
+          {
+            $this->getOAuthClient('yahoo')->getConsumer()->disableSSLChecks();
+          }
+
           $oauthAccessToken = $this->getAttribute('yahoo_oauth_access_token');
           if(isset($oauthAccessToken['oauth_token'], $oauthAccessToken['oauth_token_secret']))
           {
