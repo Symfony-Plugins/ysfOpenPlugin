@@ -26,7 +26,7 @@ class ysfOpenIDUser extends sfBasicSecurityUser
     return ($this->authenticated && $this->hasCredential('openid'));
   }
 
-  public function login($identity, $profile)
+  public function login($identity, $profile = array())
   {
     $this->setAuthenticated(true);
     $this->addCredential('openid');
@@ -55,12 +55,12 @@ class ysfOpenIDUser extends sfBasicSecurityUser
 
   public function isGoogle()
   {
-    return (stripos($this->getUsername(), 'www.google.com') !== false);
+    return (stripos($this->getUsername(), 'google.com') !== false);
   }
 
   public function isYahoo()
   {
-    return (stripos($this->getUsername(), 'me.yahoo.com') !== false);
+    return (stripos($this->getUsername(), 'yahoo.com') !== false);
   }
 
   public function getUsername()
