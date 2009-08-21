@@ -16,7 +16,7 @@
 class ysfYahooOAuthClient extends ysfOAuthClient
 {
   /**
-   * Initializes this ysfOAuthYahooUser.
+   * Initializes this ysfYahooOAuthClient.
    *
    * Available options:
    *
@@ -46,13 +46,12 @@ class ysfYahooOAuthClient extends ysfOAuthClient
       // yahoo apis
       'yql_api'                         => 'http://query.yahooapis.com/v1/yql',
       'yql_public_api'                  => 'http://query.yahooapis.com/v1/public/yql',
-      'social_api'                      => 'http://social.yahooapis.com/v1',
-      'test_api'                        => 'http://json-service.appspot.com/echo',
+      'social_api'                      => 'http://social.yahooapis.com/v1'
     ), $options);
 
     parent::initialize($dispatcher, $consumer, $options);
   }
-  
+
   /**
    * YQL API
    */
@@ -63,7 +62,7 @@ class ysfYahooOAuthClient extends ysfOAuthClient
     {
       $this->dispatcher->notify(new sfEvent($this, 'application.log', array(sprintf('Fetching yql: "%s"', $query))));
     }
-    
+
     $yql = ($public === false) ? $this->options['yql_api'] : $this->options['yql_public_api'];
 
     $this->getConsumer()->setAuthType(OAUTH_AUTH_TYPE_AUTHORIZATION);
@@ -71,12 +70,12 @@ class ysfYahooOAuthClient extends ysfOAuthClient
 
     return json_decode($this->getConsumer()->getLastResponse());
   }
-  
-  
+
+
   /**
    * Social Directory API
    */
-  
+
   public function getPresence($guid)
   {
     if ($this->options['logging'])
@@ -89,8 +88,8 @@ class ysfYahooOAuthClient extends ysfOAuthClient
 
     return json_decode($this->getConsumer()->getLastResponse());
   }
-  
-  
+
+
   public function setPresence($guid, $presence)
   {
     if ($this->options['logging'])
@@ -103,7 +102,7 @@ class ysfYahooOAuthClient extends ysfOAuthClient
 
     return json_decode($this->getConsumer()->getLastResponse());
   }
-  
+
   public function getProfile($guid)
   {
     if ($this->options['logging'])
@@ -116,7 +115,7 @@ class ysfYahooOAuthClient extends ysfOAuthClient
 
     return json_decode($this->getConsumer()->getLastResponse());
   }
-  
+
   public function getConnections($guid, $offset = 0, $limit = 100)
   {
     if ($this->options['logging'])
@@ -124,11 +123,11 @@ class ysfYahooOAuthClient extends ysfOAuthClient
       $this->dispatcher->notify(new sfEvent($this, 'application.log', array(sprintf('Fetching yahoo user connections for guid: %s', $guid))));
     }
     $this->getConsumer()->setAuthType(OAUTH_AUTH_TYPE_AUTHORIZATION);
-    
+
     $this->getConsumer()->fetch(sprintf('%s/user/%s/connections?format=json&view=usercard&start=%s&count=%d', $this->options['social_api'], oauth_urlencode($guid), $offset, $limit));
     return json_decode($this->getConsumer()->getLastResponse());
   }
-  
+
   public function getContacts($guid, $offset = 0, $limit = 100)
   {
     if ($this->options['logging'])
@@ -154,7 +153,7 @@ class ysfYahooOAuthClient extends ysfOAuthClient
 
     return json_decode($this->getConsumer()->getLastResponse());
   }
-  
+
   public function getConnectionsUpdates($guid, $offset = 0, $limit = 100)
   {
     if ($this->options['logging'])
