@@ -22,7 +22,7 @@
   </div>
 
   <div class="yui-b">
-    <a href="<?php echo url_for('ysfOpenPlugin/login'); ?>?_csrf_token=<?php echo $form->getCSRFToken(); ?>&amp;identity=https://me.yahoo.com" title="<?php echo __('Yahoo! OpenID'); ?>">
+    <a href="<?php echo url_for('ysfOpenPlugin/login'); ?>?_csrf_token=<?php echo $form->getCSRFToken(); ?>&amp;identity=https://me.yahoo.com/" title="<?php echo __('Yahoo! OpenID'); ?>">
       <img src="http://www.yahoo.com/favicon.ico" alt="<?php echo __('Yahoo! OpenID'); ?>" height="16" width="16" />
       <?php echo __('Sign in with Yahoo! ID'); ?>
     </a>

@@ -19,7 +19,7 @@ class ysfOpenPluginActions extends sfActions
   public function executeIndex(sfWebRequest $request)
   {
     $oauthAccessToken = $this->getUser()->getAttribute('yahoo_oauth_access_token');
-    $yahoo = $this->getUser()->getOAuthClient('yahoo');
+    $yahoo = $this->getUser()->hasOAuthClient('yahoo') && $this->getUser()->getOAuthClient('yahoo')->hasAccessToken();
 
     if($yahoo)
     {
@@ -56,7 +56,8 @@ class ysfOpenPluginActions extends sfActions
     $this->form = new OpenIdentityForm();
 
     $consumer = new Zend_OpenId_Consumer(new Zend_OpenId_Consumer_Storage_File(sfConfig::get('sf_cache_dir') . '/openid/'));
-    $profile = new Zend_OpenId_Extension_Sreg(array('nickname' => true, 'fullname' => false, 'email' => true, 'dob' => false, 'gender' => false, 'postcode' => false, 'language' => false, 'timezone' => false), null, '1.1');
+    $profile  = new Zend_OpenId_Extension_Sreg(array('nickname' => true, 'fullname' => false, 'email' => true, 'dob' => false, 'gender' => false, 'postcode' => false, 'language' => false, 'timezone' => false), null, '1.1');
+    // $oauth    = new Zend_OpenID_Extension_Oauth();
 
     $openIdMode = $request->getParameter('openid_mode');
     $openIdRealm = sfConfig::get('app_openid_realm');

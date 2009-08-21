@@ -18,11 +18,11 @@ class OpenIdentityValidator extends sfValidatorBase
   protected function doClean($value)
   {
 
-    if(stristr($value, 'ymail.com') || stristr($value, 'yahoo.com')) // yahoo email = yahoo open id
+    if(stristr($value, '@ymail.com') || stristr($value, '@yahoo.com'))
     {
-      $value = 'https://me.yahoo.com';
+      $value = 'https://open.login.yahooapis.com/openid/op/auth';
     }
-    else if(stristr($value, 'gmail.com') || stristr($value, 'google.com')) // google email = google open id
+    else if(stristr($value, '@gmail.com') || stristr($value, '@google.com'))
     {
       $value = 'https://www.google.com/accounts/o8/id';
     }
