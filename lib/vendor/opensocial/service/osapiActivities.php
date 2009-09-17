@@ -24,6 +24,15 @@
 class osapiActivities extends osapiService {
 
   /**
+   * Gets a list of fields supported by this service
+   *
+   * @return osapiRequest the request
+   */
+  public function getSupportedFields() {
+    return osapiRequest::createRequest('activities.getSupportedFields', array('userId' => '@supportedFields'));
+  }
+  
+  /**
    * Gets a list of activities.
    *
    * @param array $params the parameters defining which activities to retrieve

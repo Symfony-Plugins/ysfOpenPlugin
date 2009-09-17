@@ -18,6 +18,7 @@
 require_once "osapiHttpBasic.php";
 require_once "osapiOAuth2Legged.php";
 require_once "osapiOAuth3Legged.php";
+require_once "osapiOAuth3Legged_10a.php";
 require_once "osapiSecurityToken.php";
 require_once "osapiFCAuth.php";
 

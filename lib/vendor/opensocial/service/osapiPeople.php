@@ -32,7 +32,16 @@ class osapiPeople extends osapiService {
   public function get($params) {
     return osapiRequest::createRequest('people.get', $params);
   }
-
+  
+  /**
+   * Gets a list of fields supported by this service
+   *
+   * @return osapiRequest the request
+   */
+  public function getSupportedFields() {
+    return osapiRequest::createRequest('people.getSupportedFields', array('userId' => '@supportedFields'));
+  }
+  
   /**
    * Gets the application's viewer.
    *

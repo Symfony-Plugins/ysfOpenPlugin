@@ -21,9 +21,12 @@
  */
 class osapiMySpaceProvider extends osapiProvider {
   public function __construct(osapiHttpProvider $httpProvider = null) {
-    parent::__construct("http://api.myspace.com/request_token", "http://api.myspace.com/authorize", "http://api.myspace.com/access_token", "http://api.myspace.com/v2", null, "MySpace", true, $httpProvider);
+    parent::__construct("http://api.myspace.com/request_token", 
+    	"http://api.myspace.com/authorize", 
+    	"http://api.myspace.com/access_token", 
+    	"http://opensocial.myspace.com/roa/09", null, "MySpace", true, $httpProvider);
   }
-
+  
   /**
    * Adjusts a request prior to being sent in order to fix container-specific
    * bugs.
@@ -34,16 +37,23 @@ class osapiMySpaceProvider extends osapiProvider {
    * @param array $headers The headers being sent in this request.
    * @param osapiAuth $signer The signing mechanism used for this request.
    */
-   public function preRequestProcess(&$request, &$method, &$url, &$headers, osapiAuth &$signer) {
-    if (is_array($request)) {
-      foreach ($request as $req) {
-        $this->fixRequest($req, $method, $url, $headers, $signer);
-      }
-    } else {
-      $this->fixRequest($request, $method, $url, $headers, $signer);
+  public function preRequestProcess(&$request, &$method, &$url, &$headers, osapiAuth &$signer) {
+
+    if($request->method == 'appdata.update' || $request->method == 'appdata.create') {
+      $this->formatAppDataOut($request);
     }
   }
 
+  private function formatAppDataOut(osapiRequest &$request) {
+    $data = new osapiAppDataModel();
+    
+    foreach($request->params['data'] as $key=>$value) {
+      $data->setField($key, $value);
+    }
+    
+    $request->params['data'] = $data;
+  }
+  
   /**
    * Attempts to correct an atomic request.
    * @param osapiRequest $request The request to fix.
@@ -53,33 +63,7 @@ class osapiMySpaceProvider extends osapiProvider {
    * @param osapiAuth $signer The signing mechanism used for this request.
    */
   private function fixRequest(osapiRequest &$request, &$method, &$url, &$headers, osapiAuth &$signer) {
-    $this->fixAtMe($request, $url, $signer);
-  }
-
-
-  /**
-   * MySpace returns "oauth_problem=permission_denied" if you request @me/@self.
-   * @param osapiRequest $request
-   * @param string $url
-   * @param osapiAuth $signer
-   */
-  private function fixAtMe(osapiRequest &$request, &$url, osapiAuth &$signer) {
-    if (method_exists($signer, 'getUserId')) {
-      $userId = $signer->getUserId();
-      if ($userId) {
-        if (array_key_exists('userId', $request->params)) {
-          if (is_array($request->params['userId'])) {
-            foreach($request->params['userId'] as $key => $value) {
-              if ($value == '@me') {
-                $request->params['userId'][$key] = $userId;
-              }
-            }
-          } else if ($request->params['userId'] == '@me') {
-            $request->params['userId'] = $userId;
-          }
-        }
-      }
-    }
+	
   }
 
   /**
@@ -89,14 +73,97 @@ class osapiMySpaceProvider extends osapiProvider {
    */
   public function postRequestProcess(osapiRequest &$request, &$response) {
     $this->fixNastyResponses($response);
+    $this->fixStatusLink($request,$response);
+    
+    if($request->method == 'appdata.get') {
+      $this->formatAppDataIn($request, $response);
+    }else{
+      $this->fixModelContainer($request,$response);
+    }
   }
 
+  /**
+   * Attempts to correct the response containing a statusLink when it should return an ID.
+   * @param osapiRequest $request
+   * @param array $response
+   */
+  private function fixStatusLink(osapiRequest &$request, &$response) {
+  	
+    if( stripos($request->method, 'update') !== false || 
+	    stristr($request->method, 'create') !== false || 
+	    stristr($request->method, 'upload') !== false ) {
+	        
+		$data = json_decode($response['data']);
+	    
+      if (!empty($data->statusLink)) {
+          $data->id = substr($data->statusLink, strrpos($data->statusLink,"/")+1);
+          unset($data->statusLink);
+          $response['data'] = json_encode($data);
+      }
+    }
+  }
+  
+  private function formatAppDataIn(osapiRequest &$request, &$response) {
+      $msdata = json_decode($response['data']);
+      $data = array();
+      
+      foreach($msdata->entry as $entry) {
+        $personId = $entry->userAppData->personId;
+        $data[$personId] = array();
+        
+        foreach($entry->userAppData->appData as $value) {
+          $data[$personId][$value->key] = $value->value;
+        }
+      }
+      $msdata->entry = $data;
+      
+      $response['data'] = json_encode($msdata);
+  }
+        
+  
+ /**
+   * Correct issue where data objects are nested inside a 'modelname' node.
+   * @param osapiRequest $request
+   * @param array $response
+   */
+  private function fixModelContainer(osapiRequest &$request, &$response) {
+    $plural_rules = array(
+      'groups'=>'group', 
+      'people'=>'person', 
+      'albums'=>'album', 
+      'mediaItems'=>'mediaItem', 
+      'activities'=>'activity', 
+      'appdata'=>'appData',
+      'statusmood'=>'statusmood',
+      'notifications'=>'notification');
+    
+    $data = json_decode($response['data']);
+    $service = $request->getService($request->method);
+    $model = $plural_rules[$service];
+    
+    if (isset($data->entry)) {
+        foreach($data->entry as $key=>$value) {
+            if($model == 'appData') {
+                $data->entry[$key] = $value->{'userAppData'};
+            } else {
+                $data->entry[$key] = $value->{$model};
+            }
+        }
+    } else if(isset($data->{$model})) {
+        $data = $data->{$model};
+    }
+    
+    $response['data'] = json_encode($data);
+  }
+  
   /**
    * Parses MySpace's gross HTML-ified error response.
    * @param array $response
    */
   private function fixNastyResponses(&$response) {
-    if ($response['http_code'] == 403) {
+    if ($response['http_code'] == 403 || 
+        $response['http_code'] == 401 || 
+        $response['http_code'] == 404) {
       $matches = array();
       if (preg_match("/<h2>(.*?)<\/h2>/s", $response['data'], $matches )) {
         $response['data'] = $matches[1];

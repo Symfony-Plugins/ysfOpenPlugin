@@ -174,7 +174,8 @@ class osapiOAuth3Legged extends osapiOAuth2Legged {
    * @return array('http_code' => HTTP response code (200, 404, 401, etc), 'data' => the html document)
    */
   protected function requestRequestToken() {
-    $requestTokenRequest = OAuthRequest::from_consumer_and_token($this->consumerToken, NULL, "GET", $this->provider->requestTokenUrl, array());
+    $requestParams = (isset($this->provider->oauthRequestTokenParams)) ? $this->provider->oauthRequestTokenParams : array();
+    $requestTokenRequest = OAuthRequest::from_consumer_and_token($this->consumerToken, NULL, "GET", $this->provider->requestTokenUrl, $requestParams);
     if(is_array($this->provider->requestTokenParams)){
       foreach($this->provider->requestTokenParams as $key => $value) {
         $requestTokenRequest->set_parameter($key, $value);

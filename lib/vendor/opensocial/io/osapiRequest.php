@@ -25,7 +25,7 @@ class osapiRequest {
   public $method;
   public $params;
   public $id;
-
+  
   public function __construct($method, $params) {
     $this->method = $method;
     $this->params = $params;
@@ -40,14 +40,20 @@ class osapiRequest {
    * @return osapiRequest the generated request
    */
   public static function createRequest($method, $params) {
+      $availableServices = array('people', 'activities', 'appdata', 'messages', 'system', 'cache', 
+        'albums', 'mediaItems', 'statusmood', 'notifications', 'groups');
+      $availableMethods = array('get', 'update', 'create', 'delete', 'upload', 
+        'getSupportedFields', 'getSupportedMood');
+      
     // Verify the service name
-    if (! in_array(self::getService($method), array('people', 'activities', 'appdata', 'messages', 'system', 'cache'))) {
+    if (! in_array(self::getService($method), $availableServices)) {
       throw new osapiException("Invalid service: ".self::getService($method));
     }
     // Verify the method
     if ((self::getService($method) == 'cache' && self::getOperation($method) != 'invalidate') ||
         (self::getService($method) == 'system' && self::getOperation($method) != 'listMethods') ||
-        (self::getService($method) != 'cache' && self::getService($method) != 'system' && ! in_array(self::getOperation($method), array('get', 'update', 'create', 'delete')))) {
+        (self::getService($method) != 'cache' && self::getService($method) != 'system' && 
+            !in_array(self::getOperation($method), $availableMethods))) {
       throw new osapiException("Invalid method: ".self::getOperation($method));
     }
     if (self::getService($method) != 'cache' && self::getService($method) != 'system') {
@@ -58,7 +64,7 @@ class osapiRequest {
 	    if (! is_array($params['userId'])) {
 	      $params['userId'] = array($params['userId']);
 	    }
-	    if (isset($params['groupId']) && ! in_array($params['groupId'], array('@self', '@all', '@friends'))) {
+	    if (isset($params['groupId']) && ! in_array($params['groupId'], array('@self', '@all', '@friends', '@supportedMood'))) {
 	      throw new osapiException("Invalid groupId, allowed types are: @self, @all and @friends");
 	    }
     }
