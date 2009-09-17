@@ -1,0 +1,12 @@
+all:
+  yahoo:
+    application_id:
+    consumer_key:
+    consumer_secret:
+    dropzones:
+      853760: http://preview.apps.yahoo.com/canvas/%s/YahooFullView/
+      852480: http://apps.yahoo.com/canvas/%s/YahooFullView/
+      852096: http://my.yahoo.com/
+      854144: http://m.www.yahoo.com/
+      853888: http://om.mail.yahoo.com/
+      854272: http://toolbar.yahoo.com/
