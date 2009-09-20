@@ -10,6 +10,7 @@
  */
 class ysfOpenPluginConfiguration extends sfPluginConfiguration
 {
+
   /**
    * @see sfPluginConfiguration
    */
@@ -17,7 +18,10 @@ class ysfOpenPluginConfiguration extends sfPluginConfiguration
   {
     if (sfConfig::get('sf_debug'))
     {
+      require_once(dirname(__FILE__).'/../lib/debug/ysfWebDebugPanelYahooYQL.class.php');
 
+      $this->dispatcher->connect('debug.web.load_panels', array('ysfWebDebugPanelYahooYQL', 'listenToLoadDebugWebPanelEvent'));
     }
   }
+
 }
