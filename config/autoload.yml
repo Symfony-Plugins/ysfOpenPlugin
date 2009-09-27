@@ -2,19 +2,19 @@ autoload:
   yahoo:
     name:           yahoo
     path:           %SF_PLUGINS_DIR%/ysfOpenPlugin/lib/vendor/yahoo
-    recursive:      on
+    recursive:      true
 
   openid:
     name:           openid
     path:           %SF_PLUGINS_DIR%/ysfOpenPlugin/lib/vendor/openid
-    recursive:      on
+    recursive:      true
 
   oauth:
     name:           oauth
     path:           %SF_PLUGINS_DIR%/ysfOpenPlugin/lib/vendor/oauth
-    recursive:      on
+    recursive:      true
 
   opensocial:
     name:           opensocial
     path:           %SF_PLUGINS_DIR%/ysfOpenPlugin/lib/vendor/opensocial
-    recursive:      on
+    recursive:      true
