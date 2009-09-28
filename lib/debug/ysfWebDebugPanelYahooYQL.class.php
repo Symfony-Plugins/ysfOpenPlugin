@@ -10,7 +10,7 @@
  */
 class ysfWebDebugPanelYahooYQL extends sfWebDebugPanel
 {
-  public function listenToLoadDebugWebPanelEvent(sfEvent $event)
+  public static function listenToLoadDebugWebPanelEvent(sfEvent $event)
   {
     $event->getSubject()->setPanel('YahooYQL', new self($event->getSubject()));
   }
