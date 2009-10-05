@@ -1,5 +1,8 @@
 <?php
-/*
+/**
+ * @package OpenSocial
+ * @license Apache License
+ *
  * Copyright 2008 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -88,7 +91,7 @@ class osapi {
       return $this->$service;
     }
   }
-
+  
   /**
    * If set to true, osapi will raise exceptions on anything
    * that isn't quite spec compliant. Mostly useful for testing

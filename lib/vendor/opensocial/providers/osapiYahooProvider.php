@@ -5,39 +5,26 @@
  *
  * Copyright 2008 Google Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an 'AS IS' BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
 /**
- * Pre-defined provider class for Google
- * @author Arne Roomann-Kurrik
+ * Pre-defined provider class for Yahoo! (http://developer.yahoo.com/opensocial)
  */
-class osapiGoogleProvider extends osapiProvider {
-
-  /**
-   * Specifies the appropriate data for an orkut request.
-   * @param osapiHttpProvider httpProvider The HTTP request provider to use.
-   */
+class osapiYahooProvider extends osapiProvider {
   public function __construct(osapiHttpProvider $httpProvider = null) {
-    parent::__construct('https://www.google.com/accounts/OAuthGetRequestToken', 'https://www.google.com/accounts/OAuthAuthorizeToken', 'https://www.google.com/accounts/OAuthGetAccessToken', 'http://www-opensocial.googleusercontent.com/api/', 'http://www-opensocial.googleusercontent.com/api/rpc', "Google", true, $httpProvider);
+    parent::__construct('https://api.login.yahoo.com/oauth/v2/get_request_token', 'https://api.login.yahoo.com/oauth/v2/request_auth', 'https://api.login.yahoo.com/oauth/v2/get_token', 'http://appstore.apps.yahooapis.com/social/rest', null, 'Yahoo!', true, $httpProvider);
   }
-  
-  /**
-   * Parameters to include in the OAuth request token call (some containers 
-   * need a scope parameter).
-   * @var array
-   */
-  public $oauthRequestTokenParams = array('scope' => 'http://www-opensocial.googleusercontent.com/api/ http://www-opensocial.googleusercontent.com/api/rpc');
 
   /**
    * Set's the signer's useBodyHash to true
@@ -50,7 +37,7 @@ class osapiGoogleProvider extends osapiProvider {
    */
   public function preRequestProcess(&$request, &$method, &$url, &$headers, osapiAuth &$signer) {
     if (method_exists($signer, 'setUseBodyHash')) {
-      $signer->setUseBodyHash(true);
+      $signer->setUseBodyHash(false);
     }
   }
 }
