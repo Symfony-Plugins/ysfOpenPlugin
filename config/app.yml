@@ -3,6 +3,12 @@ all:
     application_id:
     consumer_key:
     consumer_secret:
+    callback_domain:
+  yap:
+    application_id:
+    consumer_key:
+    consumer_secret:
+    callback_domain:
     dropzones:
       853760: http://preview.apps.yahoo.com/canvas/%s/YahooFullView/
       852480: http://apps.yahoo.com/canvas/%s/YahooFullView/
