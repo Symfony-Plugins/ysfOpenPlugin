@@ -55,6 +55,27 @@ class ysfApplicationWebRequest extends sfWebRequest
     return $this->hasParameter('oauth_signature');
   }
 
+  public function getAccessToken(YahooOAuthApplication $yahoo)
+  {
+    $token = false;
+    if($this->hasParameter('openid_oauth_request_token'))
+    {
+      // exchange openid+oauth authorized request token for yahoo access token
+      $token = $yahoo->getAccessToken(new YahooOAuthRequestToken($this->getParameter('openid_oauth_request_token'), null));
+
+      // update access token in yahoo oauth client
+      $yahoo->token = $token;
+    }
+    elseif($this->isYahooAuthenticated())
+    {
+      // create new yahoo access token from yap request parameters
+      $token = new YahooOAuthAccessToken($this->getParameter('yap_viewer_access_token'), $this->getParameter('yap_viewer_access_token_secret'), $this->getParameter('yap_time'), null, (time() + 60), $this->getParameter('yap_viewer_guid'));
+      $yahoo->token = $token;
+    }
+
+    return $token;
+  }
+
   public function getOAuthSignature()
   {
     return $this->getParameter('oauth_signature');
@@ -85,6 +106,16 @@ class ysfApplicationWebRequest extends sfWebRequest
     $guid = $this->getParameter('yap_viewer_guid');
 
     return ($this->isOAuth() && !empty($guid));
+  }
+
+  public function isYahooFullView()
+  {
+    return ($this->getYahooView() == 'YahooFullView');
+  }
+
+  public function isYahooSmallView()
+  {
+    return ($this->getYahooView() == 'YahooSmallView');
   }
 
   public function getYahooView()
@@ -144,9 +175,9 @@ class ysfApplicationWebRequest extends sfWebRequest
       /**
        * Move settings from app.yml to factories.yml options
        */
-      $dropzones = sfConfig::get('app_yahoo_dropzones');
+      $dropzones = sfConfig::get('app_yap_dropzones');
 
-      $doneUrl = isset($dropzones[$this->getYahooDropzoneId()]) ? str_replace('%s', sfConfig::get('app_yahoo_application_id'), $dropzones[$this->getYahooDropzoneId()]) : $default;
+      $doneUrl = isset($dropzones[$this->getYahooDropzoneId()]) ? str_replace('%s', sfConfig::get('app_yap_application_id'), $dropzones[$this->getYahooDropzoneId()]) : $default;
     }
     else
     {
