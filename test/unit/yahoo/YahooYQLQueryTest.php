@@ -2,7 +2,7 @@
 
 require_once 'PHPUnit/Framework.php';
 
-require dirname(__FILE__).'/../../../lib/Yahoo/YahooYQLQuery.class.php';
+require dirname(__FILE__).'/../../../lib/vendor/yahoo/YahooYQLQuery.class.php';
 
 class YahooYQLQueryTest extends PHPUnit_Framework_TestCase {
 

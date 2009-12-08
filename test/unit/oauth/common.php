@@ -2,7 +2,7 @@
 
 require_once 'PHPUnit/Framework.php';
 
-require dirname(__FILE__).'/../../../lib/OAuth/OAuth.php';
+require dirname(__FILE__).'/../../../lib/vendor/oauth/OAuth.php';
 
 
 /**
